@@ -250,6 +250,7 @@ export const getBlogByCategoryAndPage = async (req, res) => {
   const category = req.params.category
   const pgNo = req.params.page
   const blogsPerPage = 5
+  let totalPages = 0
 
   let categoryBlogPerPage
   try {
@@ -270,7 +271,7 @@ export const getBlogByCategoryAndPage = async (req, res) => {
     return res.status(200).json({ blogs: [] })
   }
   const blogs = categoryBlogPerPage.slice(startIndex, endIndex)
-  const totalPages = Math.ceil(totalBlogs / blogsPerPage)
+  totalPages = Math.ceil(totalBlogs / blogsPerPage)
 
   if (!blogs) {
     return res.status(500).json({ message: 'Unexpected Error Occurred' })

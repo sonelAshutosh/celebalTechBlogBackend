@@ -2,9 +2,10 @@
   "name": "celebal-blog-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
+    "build": "server.js",
     "dev": "nodemon server.js"
   },
   "keywords": [],
