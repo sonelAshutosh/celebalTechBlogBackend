@@ -217,3 +217,82 @@ export const dislikeBlog = async (req, res) => {
 
   return res.status(201).json({ message: 'Blog disLiked', disLikesCount })
 }
+
+export const getBlogByPage = async (req, res) => {
+  const pgNo = req.params.page
+  const blogsPerPage = 5
+
+  let blogs
+
+  try {
+    blogs = await Blog.find().sort({ createdAt: -1 }).exec()
+  } catch (err) {
+    console.log(err)
+  }
+
+  const totalBlogs = blogs.length
+  const startIndex = (pgNo - 1) * blogsPerPage
+  const endIndex = startIndex + blogsPerPage
+
+  if (startIndex >= totalBlogs) {
+    return []
+  }
+
+  blogs = blogs.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(totalBlogs / blogsPerPage)
+
+  res.status(200).json({ blogs, totalPages })
+}
+
+export const getBlogByCategoryAndPage = async (req, res) => {
+  const category = req.params.category
+  const pgNo = req.params.page
+  const blogsPerPage = 5
+
+  let categoryBlogPerPage
+  try {
+    if (category === 'all')
+      categoryBlogPerPage = await Blog.find().sort({ createdAt: -1 }).exec()
+    else
+      categoryBlogPerPage = await Blog.find({ category })
+        .sort({ createdAt: -1 })
+        .exec()
+  } catch (err) {
+    console.log(err)
+  }
+  const totalBlogs = categoryBlogPerPage.length
+  const startIndex = (pgNo - 1) * blogsPerPage
+  const endIndex = startIndex + blogsPerPage
+
+  if (startIndex >= totalBlogs) {
+    return res.status(200).json({ blogs: [] })
+  }
+  const blogs = categoryBlogPerPage.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(totalBlogs / blogsPerPage)
+
+  if (!blogs) {
+    return res.status(500).json({ message: 'Unexpected Error Occurred' })
+  }
+
+  return res.status(200).json({ blogs, totalPages })
+}
+
+export const getBlogBySearch = async (req, res) => {
+  const { searchQuery } = req.params
+
+  if (searchQuery === '' || searchQuery === undefined)
+    return res.status(200).json({ searchResults: [] })
+
+  let searchResults
+
+  try {
+    searchResults = await Blog.find({
+      title: { $regex: searchQuery, $options: 'i' },
+    }).sort({ createdAt: -1 })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Unexpected Error Occurred' })
+  }
+
+  res.status(200).json({ searchResults })
+}

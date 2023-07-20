@@ -9,6 +9,9 @@ import {
   deleteBlog,
   likeBlog,
   dislikeBlog,
+  getBlogByPage,
+  getBlogByCategoryAndPage,
+  getBlogBySearch,
 } from '../controllers/blogControllers.js'
 import authenticateToken from '../auth/auth.js'
 
@@ -24,5 +27,19 @@ blogRouter.delete('/delete/:id', authenticateToken, deleteBlog)
 
 blogRouter.post('/like/:id', authenticateToken, likeBlog)
 blogRouter.post('/dislike/:id', authenticateToken, dislikeBlog)
+
+blogRouter.get('/pages/:page', authenticateToken, getBlogByPage)
+
+blogRouter.get(
+  '/category/:category/pages/:page',
+  authenticateToken,
+  getBlogByCategoryAndPage
+)
+
+blogRouter.get(
+  '/search/searchByTitle/:searchQuery',
+  authenticateToken,
+  getBlogBySearch
+)
 
 export default blogRouter
