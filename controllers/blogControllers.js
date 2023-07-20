@@ -28,7 +28,8 @@ export const getOneBlog = async (req, res) => {
   if (!blog) {
     return res.status(500).json({ message: 'Unexpected Error Occurred' })
   }
-  res.status(200).json({ blog })
+
+  return res.status(200).json({ blog })
 }
 
 export const getBlogByUser = async (req, res) => {
@@ -91,7 +92,6 @@ export const updateBlog = async (req, res) => {
   } catch (err) {
     console.log(err)
   }
-  // console.log(existingBlog)
 
   const { title, desc, image, userId, category } = req.body
   const imgString = image.myFile
@@ -158,6 +158,7 @@ export const deleteBlog = async (req, res) => {
 
 export const likeBlog = async (req, res) => {
   let blog
+
   try {
     blog = await Blog.findById(req.params.id)
   } catch (err) {
@@ -189,6 +190,7 @@ export const likeBlog = async (req, res) => {
 
 export const dislikeBlog = async (req, res) => {
   let blog
+
   try {
     blog = await Blog.findById(req.params.id)
   } catch (err) {
@@ -235,13 +237,13 @@ export const getBlogByPage = async (req, res) => {
   const endIndex = startIndex + blogsPerPage
 
   if (startIndex >= totalBlogs) {
-    return []
+    return res.status(200).json({ blogs: [] })
   }
 
   blogs = blogs.slice(startIndex, endIndex)
   const totalPages = Math.ceil(totalBlogs / blogsPerPage)
 
-  res.status(200).json({ blogs, totalPages })
+  return res.status(200).json({ blogs, totalPages })
 }
 
 export const getBlogByCategoryAndPage = async (req, res) => {
@@ -291,8 +293,8 @@ export const getBlogBySearch = async (req, res) => {
     }).sort({ createdAt: -1 })
   } catch (err) {
     console.error(err)
-    res.status(500).json({ error: 'Unexpected Error Occurred' })
+    return res.status(500).json({ error: 'Unexpected Error Occurred' })
   }
 
-  res.status(200).json({ searchResults })
+  return res.status(200).json({ searchResults })
 }
